@@ -19,7 +19,15 @@
       "WebFetch(domain:api.github.com)",
       "Bash(git *)",
       "Bash(xxd)",
-      "Bash(pip3 show *)"
+      "Bash(pip3 show *)",
+      "Bash(gh auth *)",
+      "Bash(gh repo *)",
+      "Bash(rill deploy *)",
+      "Bash(rill github *)",
+      "Bash(rill auth *)",
+      "Bash(rill *)",
+      "Read(//Users/michaeldriscoll/.rill/**)",
+      "Read(//Users/michaeldriscoll/.config/**)"
     ]
   }
 }
