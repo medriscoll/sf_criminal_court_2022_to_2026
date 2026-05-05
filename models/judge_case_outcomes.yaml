@@ -1,0 +1,54 @@
+type: model
+
+# Links each charge disposition to the judge most frequently assigned
+# to that case's hearings, then computes per-charge sentencing fields.
+# Primary judge = the judge with the most calendar appearances on that case.
+sql: |
+  WITH case_primary_judge AS (
+    SELECT
+      case_number,
+      assigned_judge
+    FROM (
+      SELECT
+        cal.case_number,
+        jda.canonical_judge   AS assigned_judge,
+        COUNT(*)              AS hearing_count,
+        ROW_NUMBER() OVER (
+          PARTITION BY cal.case_number
+          ORDER BY COUNT(*) DESC, jda.canonical_judge
+        ) AS rn
+      FROM src_calendar cal
+      JOIN src_judicial_dept_assignments jda
+        ON  cal.department = jda.department
+        AND TRY_CAST(cal.hearing_date AS DATE) >= TRY_CAST(jda.start_date AS DATE)
+        AND TRY_CAST(cal.hearing_date AS DATE) <  TRY_CAST(jda.end_date   AS DATE)
+      WHERE jda.canonical_judge IS NOT NULL
+        AND cal.case_number     IS NOT NULL
+      GROUP BY cal.case_number, jda.canonical_judge
+    )
+    WHERE rn = 1
+  )
+  SELECT
+    pj.assigned_judge,
+    d.case_number,
+    d.statute_description,
+    d.dispo_type,
+    d.diversion_type,
+    d.sentence_type,
+    TRY_CAST(d.dispo_date AS TIMESTAMP)              AS dispo_date,
+    DATE_TRUNC('month', TRY_CAST(d.dispo_date AS DATE)) AS dispo_month,
+    COALESCE(d.jail_days,      0)                    AS jail_days,
+    COALESCE(d.prison_days,    0)                    AS prison_days,
+    COALESCE(d.probation_days, 0)                    AS probation_days,
+    CASE WHEN COALESCE(d.prison_days,    0) > 0 THEN 1 ELSE 0 END AS has_prison,
+    CASE WHEN COALESCE(d.jail_days,      0) > 0 THEN 1 ELSE 0 END AS has_jail,
+    CASE WHEN COALESCE(d.probation_days, 0) > 0 THEN 1 ELSE 0 END AS has_probation,
+    TRY_CAST(c.filed_date AS DATE)                   AS filed_date,
+    DATEDIFF(
+      'day',
+      TRY_CAST(c.filed_date AS DATE),
+      TRY_CAST(d.dispo_date AS DATE)
+    )                                                AS days_to_disposition
+  FROM src_charge_dispositions d
+  JOIN  case_primary_judge pj USING (case_number)
+  LEFT JOIN src_cases c       USING (case_number)

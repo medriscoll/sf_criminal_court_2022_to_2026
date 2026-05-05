@@ -1,0 +1,75 @@
+type: metrics_view
+
+display_name: Judge Sentencing Metrics
+model: judge_case_outcomes
+timeseries: dispo_date
+default_time_range: P2Y
+smallest_time_grain: day
+
+measures:
+  - name: total_charges
+    expression: COUNT(*)
+    label: Total Charges
+    description: Charge dispositions attributed to this judge
+
+  - name: total_cases
+    expression: COUNT(DISTINCT case_number)
+    label: Total Cases
+    description: Unique cases seen by this judge
+
+  - name: prison_rate
+    expression: AVG(has_prison)
+    label: Prison Rate
+    format_preset: percentage
+    description: Share of charges resulting in a prison sentence
+
+  - name: jail_rate
+    expression: AVG(has_jail)
+    label: Jail Rate
+    format_preset: percentage
+
+  - name: charges_with_prison
+    expression: SUM(has_prison)
+    label: Charges Resulting in Prison
+
+  - name: avg_jail_days
+    expression: AVG(NULLIF(jail_days, 0))
+    label: Avg Jail Days (when imposed)
+
+  - name: avg_prison_days
+    expression: AVG(NULLIF(prison_days, 0))
+    label: Avg Prison Days (when imposed)
+
+  - name: avg_probation_days
+    expression: AVG(NULLIF(probation_days, 0))
+    label: Avg Probation Days (when imposed)
+
+  - name: total_prison_days
+    expression: SUM(prison_days)
+    label: Total Prison Days
+
+  - name: total_jail_days
+    expression: SUM(jail_days)
+    label: Total Jail Days
+
+  - name: avg_days_to_disposition
+    expression: AVG(days_to_disposition)
+    label: Avg Days to Disposition
+    description: Average days from case filing to charge disposition
+
+dimensions:
+  - column: assigned_judge
+    label: Judge
+
+  - column: dispo_type
+    label: Disposition Type
+    description: How the charge was resolved
+
+  - column: statute_description
+    label: Statute / Charge
+
+  - column: diversion_type
+    label: Diversion Type
+
+  - column: sentence_type
+    label: Sentence Type

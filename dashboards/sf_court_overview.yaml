@@ -261,4 +261,90 @@ rows:
         width: 6
     height: 320px
 
+  # ── Judge Metrics ─────────────────────────────────────────────────────────
+  - items:
+      - markdown:
+          content: "## Judicial Sentencing Patterns"
+          alignment:
+            horizontal: left
+            vertical: middle
+        width: 12
+    height: 50px
+
+  - items:
+      - kpi_grid:
+          metrics_view: judge_metrics
+          title: Judge Sentencing Overview
+          measures:
+            - total_cases
+            - total_charges
+            - prison_rate
+            - avg_jail_days
+            - avg_prison_days
+            - avg_days_to_disposition
+          comparison:
+            - delta
+            - percent_change
+          sparkline: bottom
+        width: 12
+    height: 220px
+
+  - items:
+      - table:
+          metrics_view: judge_metrics
+          title: Sentencing Outcomes by Judge
+          row_dimensions:
+            - assigned_judge
+          measures:
+            - total_cases
+            - total_charges
+            - charges_with_prison
+            - prison_rate
+            - avg_jail_days
+            - avg_prison_days
+            - avg_probation_days
+            - avg_days_to_disposition
+          columns:
+            - assigned_judge
+            - total_cases
+            - total_charges
+            - charges_with_prison
+            - prison_rate
+            - avg_jail_days
+            - avg_prison_days
+            - avg_probation_days
+            - avg_days_to_disposition
+        width: 12
+    height: 380px
+
+  - items:
+      - stacked_bar:
+          metrics_view: judge_metrics
+          title: Prison Sentences Over Time by Judge
+          x:
+            field: dispo_date
+            type: temporal
+            limit: 40
+          y:
+            field: charges_with_prison
+            type: quantitative
+            zeroBasedOrigin: true
+          color:
+            field: assigned_judge
+            type: nominal
+        width: 7
+      - donut_chart:
+          metrics_view: judge_metrics
+          title: Disposition Types (Judge Cases)
+          measure:
+            field: total_charges
+            type: quantitative
+          color:
+            field: dispo_type
+            limit: 10
+            type: nominal
+          innerRadius: 50
+        width: 5
+    height: 320px
+
 max_width: 1440
