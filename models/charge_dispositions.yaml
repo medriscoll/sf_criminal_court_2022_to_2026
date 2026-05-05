@@ -14,5 +14,5 @@ sql: |
     CASE WHEN d.prison_days > 0 THEN 1 ELSE 0 END AS has_prison_sentence,
     CASE WHEN d.jail_days   > 0 THEN 1 ELSE 0 END AS has_jail_sentence,
     CASE WHEN d.probation_days > 0 THEN 1 ELSE 0 END AS has_probation
-  FROM 'sfsc_charge_dispositions.parquet' d
-  LEFT JOIN 'cases.parquet' c USING (case_number)
+  FROM src_charge_dispositions d
+  LEFT JOIN src_cases c USING (case_number)

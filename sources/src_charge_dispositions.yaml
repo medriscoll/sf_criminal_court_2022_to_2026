@@ -1,0 +1,6 @@
+type: model
+materialize: true
+connector: duckdb
+
+sql: |
+  SELECT * FROM read_parquet('https://raw.githubusercontent.com/medriscoll/sf_criminal_court_2022_to_2026/main/sfsc_charge_dispositions.parquet')

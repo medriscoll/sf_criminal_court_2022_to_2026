@@ -2,4 +2,4 @@ type: model
 
 sql: |
   SELECT *
-  FROM 'register_of_actions.parquet'
+  FROM src_register_of_actions

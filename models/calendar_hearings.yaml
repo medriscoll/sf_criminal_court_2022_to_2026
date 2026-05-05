@@ -9,4 +9,4 @@ sql: |
     TRY_CAST(calendar_date AS TIMESTAMP) AS calendar_date,
     DATE_TRUNC('month', TRY_CAST(calendar_date AS DATE)) AS hearing_month,
     DATE_TRUNC('year',  TRY_CAST(calendar_date AS DATE)) AS hearing_year
-  FROM 'calendar_with_judicial_assignments.parquet'
+  FROM src_calendar_hearings
