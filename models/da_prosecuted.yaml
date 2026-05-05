@@ -1,0 +1,9 @@
+type: model
+
+sql: |
+  SELECT
+    * EXCLUDE (arrest_date),
+    TRY_CAST(arrest_date AS TIMESTAMP) AS arrest_date,
+    DATE_TRUNC('month', TRY_CAST(arrest_date AS DATE)) AS arrest_month,
+    DATE_TRUNC('year',  TRY_CAST(arrest_date AS DATE)) AS arrest_year
+  FROM 'da_prosecuted.parquet'

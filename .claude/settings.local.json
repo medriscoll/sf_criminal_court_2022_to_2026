@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git lfs *)",
+      "Bash(git clone *)",
+      "Bash(brew install *)",
+      "Bash(python3 *)",
+      "Bash(mv /tmp/sf_criminal_court_clone/.git /Users/michaeldriscoll/sf_criminal_court/)",
+      "Bash(mv /tmp/sf_criminal_court_clone/* /Users/michaeldriscoll/sf_criminal_court/)",
+      "Bash(rm -rf /tmp/sf_criminal_court_clone)",
+      "Bash(rill --version)",
+      "Bash(rill init *)",
+      "WebFetch(domain:docs.rilldata.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(rill docs *)",
+      "Bash(rill canvas *)",
+      "Bash(rill project *)",
+      "WebFetch(domain:api.github.com)",
+      "Bash(git *)",
+      "Bash(xxd)",
+      "Bash(pip3 show *)"
+    ]
+  }
+}

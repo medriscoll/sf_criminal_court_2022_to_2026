@@ -1,0 +1,72 @@
+type: metrics_view
+
+display_name: Sentencing Outcomes
+model: charge_dispositions
+timeseries: dispo_date
+default_time_range: P2Y
+smallest_time_grain: day
+
+measures:
+  - name: total_charges
+    expression: COUNT(*)
+    label: Total Charges
+    description: Number of charge-level disposition records
+
+  - name: charges_with_prison
+    expression: SUM(has_prison_sentence)
+    label: Charges Resulting in Prison
+    description: Charges where prison days were imposed
+
+  - name: charges_with_jail
+    expression: SUM(has_jail_sentence)
+    label: Charges Resulting in Jail
+
+  - name: charges_with_probation
+    expression: SUM(has_probation)
+    label: Charges Resulting in Probation
+
+  - name: prison_rate
+    expression: AVG(has_prison_sentence)
+    label: Prison Rate
+    format_preset: percentage
+    description: Share of charges resulting in a prison sentence
+
+  - name: avg_jail_days
+    expression: AVG(NULLIF(jail_days, 0))
+    label: Avg Jail Days (when imposed)
+
+  - name: avg_prison_days
+    expression: AVG(NULLIF(prison_days, 0))
+    label: Avg Prison Days (when imposed)
+
+  - name: avg_probation_days
+    expression: AVG(NULLIF(probation_days, 0))
+    label: Avg Probation Days (when imposed)
+
+  - name: total_jail_days
+    expression: SUM(jail_days)
+    label: Total Jail Days
+
+  - name: total_prison_days
+    expression: SUM(prison_days)
+    label: Total Prison Days
+
+dimensions:
+  - column: dispo_type
+    label: Disposition Type
+    description: How the charge was resolved (convicted, dismissed, diverted, etc.)
+
+  - column: statute_description
+    label: Statute / Charge Description
+
+  - column: diversion_type
+    label: Diversion Type
+
+  - column: sentence_type
+    label: Sentence Type
+
+  - column: dispo_year
+    label: Disposition Year
+
+  - column: dispo_month
+    label: Disposition Month

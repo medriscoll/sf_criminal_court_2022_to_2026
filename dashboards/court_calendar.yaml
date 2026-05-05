@@ -1,0 +1,38 @@
+type: metrics_view
+
+display_name: Court Calendar & Hearings
+model: calendar_hearings
+timeseries: calendar_date
+default_time_range: P2Y
+smallest_time_grain: day
+
+measures:
+  - name: total_hearings
+    expression: COUNT(*)
+    label: Total Hearings
+    description: Number of scheduled or completed hearing entries
+
+  - name: unique_cases
+    expression: COUNT(DISTINCT case_number)
+    label: Unique Cases
+    description: Number of distinct cases with hearings in period
+
+  - name: judge_matched_hearings
+    expression: COUNT(*) FILTER (WHERE assigned_judge IS NOT NULL)
+    label: Judge-Matched Hearings
+    description: Hearings where a published judicial assignment was found for the department and date
+
+dimensions:
+  - column: hearing_type
+    label: Hearing Type
+    description: Type of court proceeding (arraignment, preliminary hearing, trial, sentencing, etc.)
+
+  - column: assigned_judge
+    label: Assigned Judge
+    description: Publicly assigned judge for this department and date (null if no published assignment found)
+
+  - column: hearing_year
+    label: Hearing Year
+
+  - column: hearing_month
+    label: Hearing Month

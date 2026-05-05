@@ -1,0 +1,12 @@
+type: model
+
+# Calendar hearings pre-joined to published judicial department assignments.
+# The join is date+department; assigned_judge is null where no published
+# assignment was found for that department/date combination.
+sql: |
+  SELECT
+    * EXCLUDE (calendar_date),
+    TRY_CAST(calendar_date AS TIMESTAMP) AS calendar_date,
+    DATE_TRUNC('month', TRY_CAST(calendar_date AS DATE)) AS hearing_month,
+    DATE_TRUNC('year',  TRY_CAST(calendar_date AS DATE)) AS hearing_year
+  FROM 'calendar_with_judicial_assignments.parquet'

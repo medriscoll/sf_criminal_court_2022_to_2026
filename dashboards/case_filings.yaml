@@ -1,0 +1,25 @@
+type: metrics_view
+
+display_name: Case Filings
+model: case_filings
+timeseries: filed_date
+default_time_range: P2Y
+smallest_time_grain: day
+
+measures:
+  - name: total_cases
+    expression: COUNT(*)
+    label: Total Cases
+    description: Number of criminal cases filed
+
+  - name: unique_defendants
+    expression: COUNT(DISTINCT defendant_name)
+    label: Unique Defendants
+    description: Number of distinct defendants named across cases
+
+dimensions:
+  - column: filing_year
+    label: Filing Year
+
+  - column: filing_month
+    label: Filing Month

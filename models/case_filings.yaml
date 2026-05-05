@@ -1,0 +1,9 @@
+type: model
+
+sql: |
+  SELECT
+    * EXCLUDE (filed_date),
+    TRY_CAST(filed_date AS TIMESTAMP) AS filed_date,
+    DATE_TRUNC('month', TRY_CAST(filed_date AS DATE)) AS filing_month,
+    DATE_TRUNC('year',  TRY_CAST(filed_date AS DATE)) AS filing_year
+  FROM 'cases.parquet'

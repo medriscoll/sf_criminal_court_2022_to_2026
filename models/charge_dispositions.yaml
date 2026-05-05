@@ -1,0 +1,18 @@
+type: model
+
+# Charge-level dispositions and sentences, enriched with case-level context.
+# Only ~13,790 of the 44,029 charge rows have a matched case_number (the Court
+# declined to supply public case numbers in the rule 10.500 response).
+sql: |
+  SELECT
+    d.* EXCLUDE (dispo_date),
+    TRY_CAST(d.dispo_date AS TIMESTAMP) AS dispo_date,
+    c.defendant_name,
+    c.filed_date,
+    DATE_TRUNC('month', TRY_CAST(d.dispo_date AS DATE)) AS dispo_month,
+    DATE_TRUNC('year',  TRY_CAST(d.dispo_date AS DATE)) AS dispo_year,
+    CASE WHEN d.prison_days > 0 THEN 1 ELSE 0 END AS has_prison_sentence,
+    CASE WHEN d.jail_days   > 0 THEN 1 ELSE 0 END AS has_jail_sentence,
+    CASE WHEN d.probation_days > 0 THEN 1 ELSE 0 END AS has_probation
+  FROM 'sfsc_charge_dispositions.parquet' d
+  LEFT JOIN 'cases.parquet' c USING (case_number)

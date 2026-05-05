@@ -1,0 +1,38 @@
+type: metrics_view
+
+display_name: DA Prosecuted Cases
+model: da_prosecuted
+timeseries: arrest_date
+default_time_range: P2Y
+smallest_time_grain: day
+
+measures:
+  - name: total_cases
+    expression: COUNT(*)
+    label: Total Prosecuted Cases
+
+  - name: unique_incidents
+    expression: COUNT(DISTINCT incident_number)
+    label: Unique Incidents
+
+dimensions:
+  - column: crime_type
+    label: Crime Type
+
+  - column: da_action_taken
+    label: DA Action Taken
+    description: Prosecutorial decision (e.g., convicted, dismissed, diverted)
+
+  - column: case_status
+    label: Case Status
+    description: Current status of the prosecuted case
+
+  - column: filed_case_type
+    label: Filed Case Type
+    description: Felony, misdemeanor, or infraction as filed
+
+  - column: arrest_year
+    label: Arrest Year
+
+  - column: arrest_month
+    label: Arrest Month

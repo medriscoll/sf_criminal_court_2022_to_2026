@@ -1,0 +1,40 @@
+type: metrics_view
+
+display_name: DA Arrests
+model: da_arrests
+timeseries: arrest_date
+default_time_range: P2Y
+smallest_time_grain: day
+
+measures:
+  - name: total_arrests
+    expression: COUNT(*)
+    label: Total Arrests
+    description: Number of arrest records in the DA feed
+
+  - name: unique_incidents
+    expression: COUNT(DISTINCT incident_number)
+    label: Unique Incidents
+
+dimensions:
+  - column: crime_type
+    label: Crime Type
+    description: Broad crime category assigned by the DA
+
+  - column: arresting_agency
+    label: Arresting Agency
+    description: Law enforcement agency that made the arrest
+
+  - column: da_action_taken
+    label: DA Action Taken
+    description: What the DA did with the arrest (filed, declined, diverted, etc.)
+
+  - column: booked_case_type
+    label: Booked Case Type
+    description: Felony, misdemeanor, or infraction as booked
+
+  - column: arrest_year
+    label: Arrest Year
+
+  - column: arrest_month
+    label: Arrest Month

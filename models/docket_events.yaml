@@ -1,0 +1,5 @@
+type: model
+
+sql: |
+  SELECT *
+  FROM 'register_of_actions.parquet'

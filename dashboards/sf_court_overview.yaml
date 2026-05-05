@@ -1,0 +1,264 @@
+type: canvas
+display_name: SF Criminal Court Overview
+defaults:
+  time_range: P2Y
+  comparison_mode: time
+  filters: {}
+filters:
+  pinned:
+    - crime_type
+    - dispo_type
+    - da_action_taken
+
+rows:
+  # ── Header ────────────────────────────────────────────────────────────────
+  - items:
+      - markdown:
+          content: "# SF Criminal Court — Case Overview"
+          alignment:
+            horizontal: center
+            vertical: middle
+        width: 12
+    height: 60px
+
+  # ── Top-level KPIs ────────────────────────────────────────────────────────
+  - items:
+      - kpi_grid:
+          comparison:
+            - delta
+            - percent_change
+          hide_time_range: true
+          measures:
+            - total_cases
+            - unique_defendants
+          metrics_view: case_filings
+          sparkline: bottom
+          title: Case Filings
+
+        width: 3
+      - kpi_grid:
+          metrics_view: sentencing_outcomes
+          title: Sentencing Outcomes
+          measures:
+            - total_charges
+            - prison_rate
+            - avg_jail_days
+            - avg_prison_days
+          comparison:
+            - delta
+            - percent_change
+          sparkline: bottom
+
+        width: 3
+      - kpi_grid:
+          metrics_view: da_arrests
+          title: DA Arrests
+          measures:
+            - total_arrests
+            - unique_incidents
+          comparison:
+            - delta
+            - percent_change
+          sparkline: bottom
+
+        width: 3
+      - kpi_grid:
+          metrics_view: court_calendar
+          title: Court Hearings
+          measures:
+            - total_hearings
+            - unique_cases
+            - judge_matched_hearings
+          comparison:
+            - delta
+            - percent_change
+          sparkline: bottom
+
+        width: 3
+    height: 220px
+
+  # ── Filing & Arrest Trends ────────────────────────────────────────────────
+  - items:
+      - line_chart:
+          metrics_view: case_filings
+          title: Case Filings Over Time
+          x:
+            field: filed_date
+            type: temporal
+          y:
+            field: total_cases
+            type: quantitative
+            zeroBasedOrigin: true
+        width: 6
+      - line_chart:
+          metrics_view: da_arrests
+          title: DA Arrests Over Time
+          x:
+            field: arrest_date
+            type: temporal
+          y:
+            field: total_arrests
+            type: quantitative
+            zeroBasedOrigin: true
+        width: 6
+    height: 300px
+
+  # ── Sentencing: Stacked bar over time + Disposition breakdown donut ───────
+  - items:
+      - stacked_bar:
+          metrics_view: sentencing_outcomes
+          title: Charge Dispositions Over Time
+          x:
+            field: dispo_date
+            type: temporal
+            limit: 40
+          y:
+            field: total_charges
+            type: quantitative
+            zeroBasedOrigin: true
+          color:
+            field: dispo_type
+            type: nominal
+        width: 7
+      - donut_chart:
+          metrics_view: sentencing_outcomes
+          title: Disposition Breakdown
+          measure:
+            field: total_charges
+            type: quantitative
+          color:
+            field: dispo_type
+            limit: 10
+            type: nominal
+          innerRadius: 50
+        width: 5
+    height: 320px
+
+  # ── DA Prosecuted by Crime Type + Court Calendar Trend ───────────────────
+  - items:
+      - stacked_bar:
+          metrics_view: da_prosecuted
+          title: Prosecuted Cases by Crime Type
+          x:
+            field: arrest_date
+            type: temporal
+            limit: 40
+          y:
+            field: total_cases
+            type: quantitative
+            zeroBasedOrigin: true
+          color:
+            field: crime_type
+            type: nominal
+        width: 6
+      - line_chart:
+          metrics_view: court_calendar
+          title: Court Hearings Over Time
+          x:
+            field: calendar_date
+            type: temporal
+          y:
+            field: total_hearings
+            type: quantitative
+            zeroBasedOrigin: true
+        width: 6
+    height: 300px
+
+  # ── Three donuts: DA action, Crime type, Hearing type ────────────────────
+  - items:
+      - donut_chart:
+          metrics_view: da_arrests
+          title: DA Action on Arrests
+          measure:
+            field: total_arrests
+            type: quantitative
+          color:
+            field: da_action_taken
+            limit: 12
+            type: nominal
+          innerRadius: 50
+        width: 4
+      - donut_chart:
+          metrics_view: da_arrests
+          title: Arrests by Crime Type
+          measure:
+            field: total_arrests
+            type: quantitative
+          color:
+            field: crime_type
+            limit: 12
+            type: nominal
+          innerRadius: 50
+        width: 4
+      - donut_chart:
+          metrics_view: court_calendar
+          title: Hearings by Type
+          measure:
+            field: total_hearings
+            type: quantitative
+          color:
+            field: hearing_type
+            limit: 12
+            type: nominal
+          innerRadius: 50
+        width: 4
+    height: 300px
+
+  # ── Sentencing detail table ───────────────────────────────────────────────
+  - items:
+      - table:
+          metrics_view: sentencing_outcomes
+          title: Sentencing Outcomes by Statute
+          row_dimensions:
+            - statute_description
+          measures:
+            - total_charges
+            - charges_with_prison
+            - charges_with_jail
+            - charges_with_probation
+            - avg_jail_days
+            - avg_prison_days
+          columns:
+            - statute_description
+            - total_charges
+            - charges_with_prison
+            - charges_with_jail
+            - charges_with_probation
+            - avg_jail_days
+            - avg_prison_days
+        width: 12
+    height: 340px
+
+  # ── Hearings by Department + Arrests by Agency ───────────────────────────
+  - items:
+      - table:
+          metrics_view: court_calendar
+          title: Hearings by Assigned Judge
+          row_dimensions:
+            - assigned_judge
+          measures:
+            - total_hearings
+            - unique_cases
+            - judge_matched_hearings
+          columns:
+            - assigned_judge
+            - total_hearings
+            - unique_cases
+            - judge_matched_hearings
+        width: 6
+      - table:
+          metrics_view: da_arrests
+          title: Arrests by Arresting Agency
+          row_dimensions:
+            - arresting_agency
+          measures:
+            - total_arrests
+            - unique_incidents
+          columns:
+            - arresting_agency
+            - total_arrests
+            - unique_incidents
+        width: 6
+    height: 320px
+
+max_width: 1440
