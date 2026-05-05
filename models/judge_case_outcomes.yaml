@@ -1,30 +1,34 @@
 type: model
+materialize: true
 
 # Links each charge disposition to the judge most frequently assigned
 # to that case's hearings, then computes per-charge sentencing fields.
 # Primary judge = the judge with the most calendar appearances on that case.
+# Uses src_calendar_hearings which already has assigned_judge pre-joined.
 sql: |
-  WITH case_primary_judge AS (
+  WITH hearing_counts AS (
+    SELECT
+      case_number,
+      assigned_judge,
+      COUNT(*) AS hearing_count
+    FROM src_calendar_hearings
+    WHERE assigned_judge IS NOT NULL
+      AND case_number    IS NOT NULL
+    GROUP BY case_number, assigned_judge
+  ),
+  case_primary_judge AS (
     SELECT
       case_number,
       assigned_judge
     FROM (
       SELECT
-        cal.case_number,
-        jda.canonical_judge   AS assigned_judge,
-        COUNT(*)              AS hearing_count,
+        case_number,
+        assigned_judge,
         ROW_NUMBER() OVER (
-          PARTITION BY cal.case_number
-          ORDER BY COUNT(*) DESC, jda.canonical_judge
+          PARTITION BY case_number
+          ORDER BY hearing_count DESC, assigned_judge
         ) AS rn
-      FROM src_calendar cal
-      JOIN src_judicial_dept_assignments jda
-        ON  cal.department = jda.department
-        AND TRY_CAST(cal.hearing_date AS DATE) >= TRY_CAST(jda.start_date AS DATE)
-        AND TRY_CAST(cal.hearing_date AS DATE) <  TRY_CAST(jda.end_date   AS DATE)
-      WHERE jda.canonical_judge IS NOT NULL
-        AND cal.case_number     IS NOT NULL
-      GROUP BY cal.case_number, jda.canonical_judge
+      FROM hearing_counts
     )
     WHERE rn = 1
   )
